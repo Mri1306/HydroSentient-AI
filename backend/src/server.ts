@@ -41,7 +41,7 @@ app.listen(config.port, () => {
     console.log(`\n🚀 HydroSentient Backend running on http://localhost:${config.port}`);
     console.log(`📡 AI Model endpoint: ${config.aiApi.baseUrl}`);
     console.log(`🔑 API Key: ${'*'.repeat(config.aiApi.apiKey.length - 4)}${config.aiApi.apiKey.slice(-4)}`);
-    console.log(`🌐 CORS allowed: ${config.cors.origin.join(', ')}\n`);
+    console.log(`🌐 CORS: auto-allowing *.onrender.com, *.vercel.app + local origins\n`);
 });
 
 export default app;
