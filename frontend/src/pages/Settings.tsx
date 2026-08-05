@@ -1,6 +1,3 @@
-@app.get("/health")
-def health():
-    return {"status": "ok"}
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Settings as SettingsIcon, Server, Cpu, RefreshCw, CheckCircle2, XCircle, AlertCircle, Info, Database, Trash2 } from "lucide-react";
