@@ -1,3 +1,6 @@
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Settings as SettingsIcon, Server, Cpu, RefreshCw, CheckCircle2, XCircle, AlertCircle, Info, Database, Trash2 } from "lucide-react";
@@ -31,11 +34,43 @@ const Settings = () => {
   const doCheck = () => {
     setChecking(true); setHealth("checking");
     checkHealth()
-      .then(r => { setHealth(r.ai_model?.status === "healthy" ? "online" : "model-offline"); setHealthDetail(r.ai_model?.error || null); })
+      .then(async (r) => {
+
+    if (r.ai_model?.status === "healthy") {
+        setHealth("online");
+        setHealthDetail(null);
+        return;
+    }
+
+    setHealth("model-offline");
+    setHealthDetail("AI service is sleeping. Waking it up...");
+
+    await wakeAI();
+})
       .catch(e => { setHealth("offline"); setHealthDetail(e?.message || null); })
       .finally(() => setChecking(false));
   };
+  const wakeAI = async () => {
+  try {
+    toast.info("AI service is sleeping. Waking it up...");
 
+    const AI_URL = "https://water-ai-0kx9.onrender.com";
+
+    // Wake the AI service
+    await fetch(`${AI_URL}/health`, {
+      method: "GET",
+      cache: "no-store",
+    });
+
+    // Wait for the model to load
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
+    // Check backend again
+    doCheck();
+  } catch (err) {
+    console.log("AI service is still starting...");
+  }
+};
   useEffect(() => { doCheck(); setHistCount(loadHistory().length); }, []);
 
   const handleClearSession = () => { clearHistory(); clearLastAnalysis(); setHistCount(0); toast.success("Session data cleared"); };
